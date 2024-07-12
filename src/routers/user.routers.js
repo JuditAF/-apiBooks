@@ -4,9 +4,9 @@ const router = Router();                                        // FICHERO CON C
 const userCtrl = require ('../controller/user.controller');
 
 
-router.post('/register”', userCtrl.getStart);
+router.post('/register', userCtrl.addUser);
 
-router.get('/login', userCtrl.getBooks);
+router.post('/login', userCtrl.getUser);
 
 
 

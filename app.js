@@ -2,11 +2,8 @@
 // IMPORTACIÓN DE MÓDULOS
 const express = require('express');
 const cors = require('cors');
-const userRouters = require("./routers/alumno.routers");
-// const subjectRouters = require("./routers/subject.routers");
-// const alumnoModel = require("./models/alumno");  
-// const respuestaModel = require("./models/respuesta");      
-const errorHandling = require ('./error/errorHandling');
+const userRouters = require("./src/routers/user.routers");     
+const errorHandling = require ('./src/error/errorHandling');
 
 
 // GENERAMOS EL OBJETO APP
@@ -24,10 +21,7 @@ app.use(express.urlencoded({ extended : false }));      // ORIGEN EN FORMATO .JS
 app.use(express.json());                                // DESTINO EN FORMATO .JSON
 
 
-app.use(userRouters);                           // LLAMAMOS A NUESTRA API QUE SE ENCUENTRA EN LAS RUTAS DE LOS ENDPOINTS
-// app.use(alumnoModel);
-// app.use(respuestaModel);
-// app.use(subjectRouters);                                   
+app.use(userRouters);                           // LLAMAMOS A NUESTRA API QUE SE ENCUENTRA EN LAS RUTAS DE LOS ENDPOINTS                                 
 
 
 //  RECOGEMOS ERRORES

@@ -1,103 +1,64 @@
 
-const crypto = require ('node:crypto');
-const book = require ( "../models/book" );
-const Book = require('../models/book');
+const { pool } = require ("../../database");
 
+const getUser = async (request, response) => {
+    try {
 
-let books = [];
+        let params = [ request.body.email, request.body.password ];
 
+        let sql = "SELECT id_user, name, last_name, email, photo FROM user WHERE email = ? AND password = ?";
+        console.log(sql);
 
-function getStart(request, response){
-    let respuesta = {error: true, codigo: 200, mensaje: 'Punto de inicio'};
-    response.send(respuesta);
-};
+        let [result] = await pool.query(sql, params);
+        console.log(result);
 
-function getBookParams(request, response){
-    const id_book = request.params.id_book;
-    const book = books.find(book => book.id_book === id_book);
-    if (book != null && id_book === book.id_book) {
-        let respuesta = {error: false, codigo: 200, mensaje: "Libro encontrado", data: [book]}
+        let respuesta = { error: false, codigo: 200, mensaje: "Usuario encontrado", data: result };
         response.send(respuesta);
-    } else {
-        response.send({error: true, codigo: 404, mensaje: "El Libro no existe"})
+
+    }
+    catch (error) {
+        response.send({ error: true, codigo: 500, mensaje: error });
     }
 };
 
-function getBooks(request, response){
-    if (books != null) {
-        let respuesta = {error: false, codigo: 200, mensaje: "Libros almacenados", data: books}
-        response.json(respuesta);
-    } else {
-        response.send({error: true, codigo: 200, mensaje: "La lista de libros está vacía"})
-    }
-};
+const addUser = async (request, response) => {
+    try {
+        console.log(request.body);
 
-
-function postBooks(request, response){
-
-    console.log(request.body);
-
-    let {title, type, author, price, photo, id_book, id_user} = request.body;
-    let newBook =  new Book (title, type, author, price, photo, id_book = id_book ?? crypto.randomUUID(), id_user = id_user ?? 1);
-    
-    if ( newBook !== null) {
-
-        books.push(newBook);
-        respuesta = {error:false, codigo: 201,                      // 201: Código Objeto Creado
-                     mensaje: "Libro añadido", data: newBook}
-    } else {
-        respuesta = {error:true, codigo: 200, 
-            mensaje: "Libro ya existente", data: newBook}
-    }
-    response.send(respuesta);
-};
-
-
-function putBooks(request, response){
-
-    let {title, type, author, price, photo, id_book, id_user} = request.body;
-    let i = books.findIndex(book => book.id_book == id_book);
-
-    if(i !== -1) {
-        books[i].title = title;
-        books[i].type = type;
-        books[i].author = author;
-        books[i].price = price;
-        books[i].photo = photo;
-        books[i].id_book = id_book;
-        books[i].id_user = id_user;
-
-        respuesta = {error:false, codigo: 200, 
-                    mensaje: "Libro Actualizado", data: books[i]}
-    } else {
-        respuesta = {error:true, codigo: 404, 
-                    mensaje: "el Libro no existe", data: book}
-    }
-
-    response.send(respuesta);
-};
-
-
-function deleteBooks(request, response){
-
-    let {id_book} = request.body;
-    let newBooks = books.filter(book => book.id_book != id_book);
-    console.log(id_book);
-    console.log(newBooks);
-    let respuesta;
-
-    if (newBooks.length != books.length) {
-
-        books = newBooks;
+        let params = [ request.body.name, request.body.last_name, request.body.email, request.body.photo, request.body.password ];
         
-        respuesta = {error:false, codigo: 200, 
-            mensaje: "Libro eliminado", data: books}
-    } else {
-        respuesta = {error:true, codigo: 404, 
-            mensaje: "el Libro no existe", data: book}
-    }
-    response.send(respuesta);
+        let sql = "INSERT INTO user ( name, last_name, email, photo, password )" +
+            " VALUES ( ?, ?, ?, ?, ? )";
+        
+        console.log(sql);
+
+        let [result] = await pool.query(sql, params);
+        console.log(result);
+
+        if (result.insertId) {                                  // InertId es un método de sql
+
+            respuesta = {
+                error: false, codigo: 201,                      // 201: Código Objeto Creado
+                mensaje: "Usuario añadido", data: String(result.insertId)
+            }
+        } else {
+            
+            respuesta = {
+                error: true, codigo: 200,
+                mensaje: "Usuario existente", data: String(-1)
+            }
+        }
+        response.send(respuesta);
+    } catch (error) {
+        response.send({ error: true, codigo: 500, mensaje: error });
+    };
 };
 
 
-module.exports = {getStart, getBooks, getBookParams, postBooks, putBooks, deleteBooks};
+module.exports = { getUser, addUser };
+
+// { "name" : "Aurora",
+//     "last_name" : "Herrera",
+//     "email" : "redesAndmas@gmail.com",
+//     "photo" : "https://pbs.twimg.com/profile_images/1724036936040321024/bPjrH8Zh_400x400.jpg",
+//     "password" : "576SD349G" }
