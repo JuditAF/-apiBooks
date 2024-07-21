@@ -1,19 +1,28 @@
 
-const { pool } = require ("../../database");
+const { pool } = require("../../database");
+import { UserService } from 'src/app/shared/user.service';
 
 const getUser = async (request, response) => {
     try {
 
-        let params = [ request.body.email, request.body.password ];
+        let params = [request.body.email, request.body.password];
 
-        let sql = "SELECT id_user, name, last_name, email, photo FROM user WHERE email = ? AND password = ?";
+        let sql = "SELECT name, last_name, email, photo FROM user WHERE email = ? AND password = ?";
         console.log(sql);
 
         let [result] = await pool.query(sql, params);
         console.log(result);
 
-        let respuesta = { error: false, codigo: 200, mensaje: "Usuario encontrado", data: result };
-        response.send(respuesta);
+        if (data = []) {
+
+            let respuesta = { error: false, codigo: 200, mensaje: "El Usuario no existe" };
+            response.send(respuesta);
+
+        } else {
+
+            let respuesta = { error: false, codigo: 200, mensaje: "Usuario encontrado", data: result };
+            response.send(respuesta);
+        }
 
     }
     catch (error) {
@@ -25,11 +34,11 @@ const addUser = async (request, response) => {
     try {
         console.log(request.body);
 
-        let params = [ request.body.name, request.body.last_name, request.body.email, request.body.photo, request.body.password ];
-        
+        let params = [request.body.name, request.body.last_name, request.body.email, request.body.photo, request.body.password];
+
         let sql = "INSERT INTO user ( name, last_name, email, photo, password )" +
             " VALUES ( ?, ?, ?, ?, ? )";
-        
+
         console.log(sql);
 
         let [result] = await pool.query(sql, params);
@@ -42,10 +51,10 @@ const addUser = async (request, response) => {
                 mensaje: "Usuario añadido", data: String(result.insertId)
             }
         } else {
-            
+
             respuesta = {
                 error: true, codigo: 200,
-                mensaje: "Usuario existente", data: String(-1)
+                mensaje: "El Usuario ya existe", data: String(-1)
             }
         }
         response.send(respuesta);
