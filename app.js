@@ -2,7 +2,8 @@
 // IMPORTACIÓN DE MÓDULOS
 const express = require('express');
 const cors = require('cors');
-const userRouters = require("./src/routers/user.routers");     
+const userRouters = require("./src/routers/user.routers");  
+const bookRouters = require("./src/routers/book.routers");   
 const errorHandling = require ('./src/error/errorHandling');
 
 
@@ -12,6 +13,7 @@ const app = express();
 
 // DEFINICIÓN DEL PUERTO
 app.set('port', process.env.PORT || 3000);  
+// app.set('port', process.env.PORT || 4200);  
     
 
 // MIDDLEWARES
@@ -21,7 +23,8 @@ app.use(express.urlencoded({ extended : false }));      // ORIGEN EN FORMATO .JS
 app.use(express.json());                                // DESTINO EN FORMATO .JSON
 
 
-app.use(userRouters);                           // LLAMAMOS A NUESTRA API QUE SE ENCUENTRA EN LAS RUTAS DE LOS ENDPOINTS                                 
+app.use(userRouters);                           // LLAMAMOS A NUESTRA API QUE SE ENCUENTRA EN LAS RUTAS DE LOS ENDPOINTS   
+app.use(bookRouters);                              
 
 
 //  RECOGEMOS ERRORES

@@ -1,6 +1,6 @@
 
 const { pool } = require("../../database");
-import { UserService } from 'src/app/shared/user.service';
+
 
 const getUser = async (request, response) => {
     try {
@@ -13,14 +13,14 @@ const getUser = async (request, response) => {
         let [result] = await pool.query(sql, params);
         console.log(result);
 
-        if (data = []) {
+        if (result == []) {
 
             let respuesta = { error: false, codigo: 200, mensaje: "El Usuario no existe" };
             response.send(respuesta);
 
         } else {
 
-            let respuesta = { error: false, codigo: 200, mensaje: "Usuario encontrado", data: result };
+            let respuesta = { error: false, codigo: 200, mensaje: "Usuario encontrado", user: result };
             response.send(respuesta);
         }
 
